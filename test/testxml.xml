@@ -1,0 +1,8 @@
+<omi-event-message>
+        <title> test xml file </title>
+        <description> anno </description>
+        <severity> test </severity>
+        <node> label </node>
+        <category> incident </category>
+        <affectedCI> OPENSHIFT (PRODUKT) </affectedCI>
+</omi-event-message>
