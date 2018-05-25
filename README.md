@@ -1,6 +1,6 @@
-# Flask webapp that routes alertmanager alerts to OMI
+# Flask running on OpenShift that routes alertmanager alerts to HP OMi
   
-Alertmanager - sends Prometheus alerts to HP OMi (Operation Manager i)  
+Prometheus Alertmanager - sends Prometheus alerts to HP OMi (Operation Manager i)  
 
 Settings.ini setting as post-url, assignee group
 
