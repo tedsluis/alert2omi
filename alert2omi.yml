@@ -1,0 +1,144 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: alert2omi
+    name: alert2omi
+  spec:
+    lookupPolicy:
+      local: false
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: alert2omi
+    name: alert2omi
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: alert2omi:latest
+    postCommit: {}
+    resources: {}
+    source:
+      contextDir: /
+      git:
+        uri: https://github.com/tedsluis/alert2omi.git
+      sourceSecret:
+        name: gitconfig
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: python:3.5
+          namespace: openshift
+      type: Source
+    triggers:
+    - github:
+        secret: AfULADCbdJyRTKrcMH_B
+      type: GitHub
+    - generic:
+        secret: YHRwWBf08p9BndZqPSqQ
+      type: Generic
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: alert2omi
+    name: alert2omi
+  spec:
+    replicas: 1
+    selector:
+      app: alert2omi
+      deploymentconfig: alert2omi
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: alert2omi
+          deploymentconfig: alert2omi
+      spec:
+        nodeSelector:
+          environment: prod 
+          region: infra
+        containers:
+        - image: alert2omi:latest
+          name: alert2omi
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 10
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - alert2omi
+        from:
+          kind: ImageStreamTag
+          name: alert2omi:latest
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: alert2omi
+    name: alert2omi
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: alert2omi
+      deploymentconfig: alert2omi
+  status:
+    loadBalancer: {}
+kind: List
+metadata: {}
