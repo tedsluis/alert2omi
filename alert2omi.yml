@@ -1,28 +1,29 @@
-apiVersion: v1
-items:
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  annotations:
+    description: Template for building and deploying alert2omi bridge in Openshift
+    iconClass: icon-python
+    name: alert2omi
+  labels:
+    template: alert2omi-template
+  name: alert2omi-template
+objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-    creationTimestamp: null
     labels:
-      app: alert2omi
-    name: alert2omi
+      app: ${APP_NAME}
+    name: ${APP_NAME}
   spec:
     lookupPolicy:
       local: false
-  status:
-    dockerImageRepository: ""
 - apiVersion: v1
   kind: BuildConfig
   metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-    creationTimestamp: null
     labels:
-      app: alert2omi
-    name: alert2omi
+      app: ${APP_NAME}
+    name: ${APP_NAME}
   spec:
     nodeSelector: null
     output:
@@ -55,32 +56,22 @@ items:
     - type: ConfigChange
     - imageChange: {}
       type: ImageChange
-  status:
-    lastVersion: 0
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-    creationTimestamp: null
     labels:
-      app: alert2omi
-    name: alert2omi
+      app: ${APP_NAME}
+    name: ${APP_NAME}
   spec:
     replicas: 1
     selector:
-      app: alert2omi
-      deploymentconfig: alert2omi
-    strategy:
-      resources: {}
+      app: ${APP_NAME}
+      deploymentconfig: ${APP_NAME}
     template:
       metadata:
-        annotations:
-          openshift.io/generated-by: OpenShiftNewApp
-        creationTimestamp: null
         labels:
-          app: alert2omi
-          deploymentconfig: alert2omi
+          app: ${APP_NAME}
+          deploymentconfig: ${APP_NAME}
       spec:
         nodeSelector:
           environment: prod 
@@ -113,22 +104,12 @@ items:
           kind: ImageStreamTag
           name: alert2omi:latest
       type: ImageChange
-  status:
-    availableReplicas: 0
-    latestVersion: 0
-    observedGeneration: 0
-    replicas: 0
-    unavailableReplicas: 0
-    updatedReplicas: 0
 - apiVersion: v1
   kind: Service
   metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-    creationTimestamp: null
     labels:
-      app: alert2omi
-    name: alert2omi
+      app: ${APP_NAME}
+    name: ${APP_NAME}
   spec:
     ports:
     - name: 8080-tcp
@@ -136,9 +117,11 @@ items:
       protocol: TCP
       targetPort: 8080
     selector:
-      app: alert2omi
-      deploymentconfig: alert2omi
-  status:
-    loadBalancer: {}
-kind: List
-metadata: {}
+      app: ${APP_NAME}
+      deploymentconfig: ${APP_NAME}
+parameters:
+- description: The name for the application.
+  displayName: Application Name
+  name: APP_NAME
+  required: true
+  value: alert2omi
