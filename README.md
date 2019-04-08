@@ -8,11 +8,19 @@ template.xml is needed for converting json to omi xml output
 
 ## Installing alert2omi
 
+### Building the application
 In the project where you want to deploy the application, run the following
-commands to deploy from the provided Openshift template:
+commands to build from the provided Openshift template:
 ```
 oc delete all -l app=alert2omi
-oc process -f alert2omi.yml | oc create -f-
+oc process -f build.yml | oc create -f-
+```
+
+### Deploying the application
+After a successful build, run the following commands in the same project to
+deploy the built image using the provided Openshift template:
+```
+oc process -f deploy.yml | oc create -f-
 ```
 
 ## Configuring Alertmanager

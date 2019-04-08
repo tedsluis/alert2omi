@@ -1,0 +1,73 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  annotations:
+    description: Template for building alert2omi bridge in Openshift
+    iconClass: icon-python
+    name: alert2omi
+  labels:
+    template: alert2omi-build-template
+  name: alert2omi-build-template
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      app: ${APP_NAME}
+    name: ${APP_NAME}
+  spec:
+    lookupPolicy:
+      local: false
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    labels:
+      app: ${APP_NAME}
+    name: ${APP_NAME}
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: alert2omi:latest
+    postCommit: {}
+    resources: {}
+    source:
+      contextDir: /
+      git:
+        uri: ${GIT_REPO}
+        ref: ${GIT_REF}
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: python:3.5
+          namespace: openshift
+      type: Source
+    triggers:
+    - github:
+        secret: AfULADCbdJyRTKrcMH_B
+      type: GitHub
+    - generic:
+        secret: YHRwWBf08p9BndZqPSqQ
+      type: Generic
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+parameters:
+- description: The name for the application.
+  displayName: Application Name
+  name: APP_NAME
+  required: true
+  value: alert2omi
+- description: Git repository used to build the application.
+  displayName: Git Repository
+  name: GIT_REPO
+  required: true
+  value: https://github.com/tedsluis/alert2omi.git
+- description: Git reference used to build the application.
+  displayName: Git Reference
+  name: GIT_REF
+  required: true
+  value: master
