@@ -6,11 +6,24 @@ Settings.ini setting as post-url, assignee group
 
 template.xml is needed for converting json to omi xml output
 
-installing alert2omi:
+## Installing alert2omi
 
-oc delete all -l app=alert2omi -n prometheus
-oc create -f alert2omi.yml -n prometheus
+### Building the application
+In the project where you want to deploy the application, run the following
+commands to build from the provided Openshift template:
+```
+oc delete all -l app=alert2omi
+oc process -f build.yml | oc create -f-
+```
 
+### Deploying the application
+After a successful build, run the following commands in the same project to
+deploy the built image using the provided Openshift template:
+```
+oc process -f deploy.yml | oc create -f-
+```
+
+## Configuring Alertmanager
 changes needed for alertmanager:
 
 ```
