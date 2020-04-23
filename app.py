@@ -26,7 +26,8 @@ try:
     ini_subcategory = config.get('global', 'subcategory')
     ini_affectedCI = config.get('global','affectedCI')
     verbose = config.get('global','verbose')
-    print('Configuration settings:\n\nposturl: %s\ncategory: %s\naffectedCI: %s\nverbose: %s\n\n' % (post_url,ini_category,ini_affectedCI,verbose))
+    openshiftversion = config.get('global','openshiftversion')
+    print('Configuration settings:\n\nposturl: %s\nopenshiftversion: %s\ncategory: %s\naffectedCI: %s\nverbose: %s\n\n' % (post_url,openshiftversion,ini_category,ini_affectedCI,verbose))
 
 except Exception as ex:
     print('Something is wrong with config: {}'.format(ex))
@@ -55,11 +56,29 @@ def webhook():
         if verbose:
           print("Incoming JSON:\n%s\n" % alert)
 
+        if openshiftversion == "4":
+
+            if "hostname" in alert['commonLabels']:
+                node = alert['commonLabels']['hostname']
+            else:
+                node = "cluster"
+            
+            title=alert['commonLabels']['alertname']
+            description=alert['commonAnnotations']['message']
+            severity=alert['commonLabels']['severity']
+
+        elif openshiftversion == "3":
+
+            title=alert['commonAnnotations']['summary'],
+            description=alert['commonAnnotations']['description'],
+            severity=alert['commonAnnotations']['severity'],
+            node=alert['commonLabels']['kubernetes_io_hostname'],
+
         omi = render_template('template.xml',
-                              title=alert['commonAnnotations']['summary'],
-                              description=alert['commonAnnotations']['description'],
-                              severity=alert['commonAnnotations']['severity'],
-                              node=alert['commonLabels']['kubernetes_io_hostname'],
+                              title=title,
+                              description=description,
+                              severity=severity,
+                              node=node,
                               subcategory=ini_subcategory,
                               category=ini_category,
                               affectedCI=ini_affectedCI

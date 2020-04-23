@@ -2,7 +2,7 @@
   
 Prometheus Alertmanager - sends Prometheus alerts to HP OMi (Operation Manager i)  
 
-Settings.ini setting as post-url, assignee group
+Settings.ini setting as post-url, assignee group and OpenShift Version (3 or 4)
 
 template.xml is needed for converting json to omi xml output
 
@@ -33,4 +33,4 @@ changes needed for alertmanager:
     url: http://alert2omi.prometheus.svc:8080/webhook
 ```
 
-Tested on OpenShift 3.6 - 3.7
+Tested on OpenShift 3.6 - 3.7 and 4.1 - 4.3
